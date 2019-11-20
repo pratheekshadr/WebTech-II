@@ -1,0 +1,2 @@
+<!-- images2.txt -->
+<img class="img-rounded" style="float: left;" src="static/images/ms2.jpg" alt="Loading.." width="440" height="340">

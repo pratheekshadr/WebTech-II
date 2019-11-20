@@ -23,6 +23,8 @@ k = 10
 global searchdf
 searchdf = pd.read_csv("static/datasets/latlong.csv") 
 
+
+
 #function that finds nearest points to the place passed as parameter
 #returns a list of nearest places
 def getNeighbors(place):
@@ -54,6 +56,7 @@ def getFare(lat1, long1, lat2, long2, seats):
 	return fare
 
 
+@app.route("/getPlaces", methods=["POST"])
 def getPlaces():
 	source = form.get['source']
 	seats = form.get['seats']
