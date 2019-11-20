@@ -1,11 +1,30 @@
 <!DOCTYPE html>
 <html>
+
 	<head>
 		<title>Hop In</title>
 		<meta name="viewport" content="width=device-width, initial-scale=1">
 		<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
 		<link rel="icon" href="{{url_for('static',filename='images/car2.jpg')}}" type="image/jpg" sizes="16x16">
+
+		<script>
+			/*function popular(){
+
+				var source=new EventSource("/stream");
+				var pop=document.getElementById("pop1");
+				//source.addEventListener=("message",function(e) {
+				//p.innerHTML=e.data;
+				//});
+				source.onmessage=function(e) {
+					var pop=document.getElementById("pop1");
+					pop.innerHTML=e.data
+				};
+			}*/
+
+		</script>
+
 	</head>
+
 
 
 	<header>
@@ -22,85 +41,28 @@
    				 <ul class="navbar-nav mr-auto">
 
       				<li class="nav-item active">
-        				<a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
+        				<a class="nav-link" href="http://localhost:5000/home">Home <span class="sr-only">(current)</span></a>
       				</li>
         		</ul>
-                  
-      			<!-- <a class="btn btn-outline-primary mr-2 my-2 my-sm-0" href="http://127.0.0.1:5000/login" role="button">Login</a> -->
-				  <!-- <a class="btn btn-outline-success mr-2 my-2 my-sm-0" href="http://127.0.0.1:5000/signUp" role="button">Signup</a> -->
-				  <a class="btn btn-outline-success mr-2 my-2 my-sm-0" href="http://127.0.0.1:5000/logout" role="button">LogOut</a>
+
   			</div>
 		</nav>
 	</header>
 
 
-	<body onload="getImage1()">
-
-		<div class="row" style="padding: 5px 5px 5px 5px;background-color:#292b2c;"id="images">
-			<div id ="pic1" style="padding: 5px 5px 5px 5px;">  Loading .....   </div>
-			<div id ="pic2"	style="padding: 5px 5px 5px 5px;">  <font color="white">Loading .....   </font></div>
-			<div id ="pic3"	style="padding: 5px 5px 5px 5px;">  <font color="white">Loading .....   </font></div>
-		</div>	
-
-		<div style="text-align: center;padding: 30px 30px 30px 30px;" id="offerJoin">
-      			<a class="btn btn-outline-dark mr-2 my-2 my-sm-0" href="http://127.0.0.1:5000/offer" role="button">OFFER A RIDE</a>
-      			<a class="btn btn-outline-dark mr-2 my-2 my-sm-0" href="http://127.0.0.1:5000/join" role="button">JOIN A RIDE</a>
-		</div>	
-
-
+	<body onload="popular()">
 		<div style="text-align: center;padding: 30px 30px 30px 30px;background-color:#5cb85c;" id="popular">
-				<h4>Most Popular Rides</h4>
-				<a id="btn" class="btn btn-dark mr-2 my-2 my-sm-0" href="{{url_for('stream')}}" role="button">Click Here</a>
-		</div>
+			<h1>Popular Rides</h1>
 
-
-		<script>
-
-			function getImage1(){
-				xhr = new XMLHttpRequest;
-				xhr.open("GET", "static/text/images1.txt", true);
-				xhr.onreadystatechange = showImage1;
-				xhr.send(null);
-			}
-
-			function showImage1(){
-				if(xhr.readyState == 4 && xhr.status == 200){
-					document.getElementById("pic1").innerHTML = xhr.responseText;
-					setTimeout(getImage2, 2000); 
-				}
-			}
-
-			function getImage2(){
-				xhr.open("GET", "static/text/images2.txt", true);
-				xhr.onreadystatechange = showImage2;
-				xhr.send(null);
-			}
-
-			function showImage2(){
-				if(xhr.readyState == 4 && xhr.status == 200){
-					document.getElementById("pic2").innerHTML = xhr.responseText;
-					setTimeout(getImage3, 2000); 
-				}	
-			}
-
-			function getImage3(){
-				xhr.open("GET", "static/text/images3.txt", true);
-				xhr.onreadystatechange = showImage3;
-				xhr.send(null);
-			}
-
-			function showImage3(){
-				if(xhr.readyState == 4 && xhr.status == 200){
-					document.getElementById("pic3").innerHTML = xhr.responseText;
-					setTimeout(obj.monitor, 1000);
-				}
-			}	
-						
-		</script>
+			{% for result in output %}
+			<a id="pop1" class="btn btn-dark mr-2 my-2 my-sm-0" href="#" role="button">{{result['source']}} -> {{result['destination']}}</a>
+			{% endfor %}
+		</div>	
 	</body>
 
 
-	<footer class="page-footer font-small blue pt-4">
+
+		<footer class="page-footer font-small blue pt-4">
   		<!-- Footer Links -->
   		<div style="background-color:#ededed;" class="container-fluid text-center text-md-left">
     	<!-- Grid row -->

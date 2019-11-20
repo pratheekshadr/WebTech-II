@@ -19,23 +19,224 @@
     <!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script> -->
 
     <!-- <script src="static/js/signUp.js"></script> -->
+    <style>
+        #container, #container1, #placeparent{
+            height:200px;
+            overflow-y: scroll;
+        }
+
+       
+    </style>
 </head>
 
 <body>
     <div class="container">
-        <form class="form-signin" action = "{{url_for('joinRide')}}" method = "post" role="form">
+        <form id="formcss" class="form-signin" action = "{{url_for('joinRide')}}" method = "post" role="form">
             <h2 class="form-signin-heading">Join Ride</h2>
-            <input type="text" name="join_source" class="form-control" placeholder="Source" required autofocus>
-            <input type="text" name="join_dest" class="form-control" placeholder="Destination" required>
+            <table border="0" cellpadding="0">
+                <tr>
+                    <td>Pick Up Points</td>
+                    <!-- <input type="text" name="join_source" class="form-control" placeholder="Source" required autofocus> -->
+                    <td><input type="text" id="sourcesearch"  name="join_source" class="form-control" onkeypress="sourceObj.getTerm()" placeholder="Source" required autofocus></td>
+                </tr>
+                <tr >
+                    <td></td>
+                    <td><div id="container" style=" display: none;"></td></div>
+                </tr>
+                </table>
+                <table border="0" cellpadding="0">
+                        <tr>
+                            <td>Pick Up Points</td>
+                            <td><input type="text" id="destsearch"  name="join_dest" class="form-control" onkeypress="destObj.getTerm()" placeholder="Destination" required autofocus></td>
+                        </tr>
+                        <tr >
+                            <td></td>
+                            <td><div id="container1" style=" display: none;"></td></div>
+                        </tr>
+                </table>
             <input type="number" name="join_seats" class="form-control" placeholder="No.of seats" required>
             <input type="date" name="join_date" class="form-control" required>
-            <!-- <input type="time" name="join_time" class="form-control" required> -->
             <input class = "btn"  type="submit" value = "Confirm" >
-            <!-- <button id="joinbtn" class="btn btn-lg btn-primary btn-block" type="button">Join</button> -->
         </form>
     </div>
+    <script>
+    var sourceObj ={
+        xhr:new XMLHttpRequest(),
+        search : document.getElementById("sourcesearch"),
+        container : document.getElementById("container"),
+        getTerm:function(){
+            if(this.timer){
+                clearTimeout(this.timer);
+                sourceObj.container.style.display="none";
+                sourceObj.container.innerHTML = "";
+            }
+            this.timer=setTimeout(sourceObj.sendTerm,1000);
+        },
+        sendTerm:function(){
+            sourceObj.search=document.getElementById("sourcesearch");
+            sourceObj.container=document.getElementById("container");
+            var lsv = localStorage.getItem(sourceObj.search.value);
+            if(lsv){
+                console.log("from cache");
+                var cacheres=JSON.parse(lsv);
+                sourceObj.populatePlaces(cacheres);
+            }
+            else{
+                sourceObj.xhr.onreadystatechange=sourceObj.showResult;
+                sourceObj.xhr.open("get","http://localhost:5000/offerRidePage/getPlaces/term="+sourceObj.search.value);
+                sourceObj.xhr.responseType="json";
+                sourceObj.xhr.send();
+            }
+        },
+        showResult:function(){
+            if(this.readyState==4 && this.status==200){
+                var resobj = this.response;
+                if(resobj.length==0){
+                    sourceObj.search.style.backgroundColor="red";
+                    sourceObj.search.style.fontStyle="bold";
+                    sourceObj.container.style.display="none";
+                }
+                else{
+                    sourceObj.search.style.backgroundColor="white";
+                    sourceObj.search.style.fontStyle="";
+                    console.log(resobj);
+                    localStorage.setItem(sourceObj.search.value,JSON.stringify(resobj))
+                    sourceObj.populatePlaces(resobj);
+                }
+            }
+        },
+        populatePlaces:function(resO){
+            sourceObj.container.innerHTML="";
+            for(i in resO){
+                var iDiv = document.createElement("div");
+                iDiv.innerHTML= resO[i];
+                iDiv.className="splaces";
+                iDiv.value = resO[i];
+                iDiv.addEventListener("click",sourceObj.printWorking);
+                sourceObj.container.appendChild(iDiv);
+            }
+            sourceObj.container.style.display="block";
+        }, 
+        printWorking: function(evt){
+            value = evt.currentTarget.value
+            sourceObj.search.value = value;
+            sourceObj.container.style.display="none";
+        }
+    };
+        var destObj ={
+        xhr:new XMLHttpRequest(),
+        search : document.getElementById("destsearch"),
+        container : document.getElementById("container1"),
+        getTerm:function(){
+            if(this.timer){
+                clearTimeout(this.timer);
+                destObj.container.style.display="none";
+                destObj.container.innerHTML = "";
+            }
+            this.timer=setTimeout(destObj.sendTerm,1000);
+        },
+        sendTerm:function(){
+            destObj.search=document.getElementById("destsearch");
+            destObj.container=document.getElementById("container1");
+            var lsv = localStorage.getItem(destObj.search.value);
+            if(lsv){
+                console.log("from cache");
+                var cacheres=JSON.parse(lsv);
+                destObj.populatePlaces(cacheres);
+            }
+            else{
+                destObj.xhr.onreadystatechange=destObj.showResult;
+                destObj.xhr.open("get","http://localhost:5000/offerRidePage/getPlaces/term="+destObj.search.value);
+                destObj.xhr.responseType="json";
+                destObj.xhr.send();
+            }
+        },
+        showResult:function(){
+            if(this.readyState==4 && this.status==200){
+                var resobj = this.response;
+                if(resobj.length==0){
+                    destObj.search.style.backgroundColor="red";
+                    destObj.search.style.fontStyle="bold";
+                    destObj.container.style.display="none";
+                }
+                else{
+                    destObj.search.style.backgroundColor="white";
+                    destObj.search.style.fontStyle="";
+                    console.log(resobj);
+                    localStorage.setItem(destObj.search.value,JSON.stringify(resobj))
+                    destObj.populatePlaces(resobj);
+                }
+            }
+        },
+        populatePlaces:function(resO){
+            destObj.container.innerHTML="";
+            for(i in resO){
+                var iDiv = document.createElement("div");
+                
+                iDiv.innerHTML= resO[i];
+                iDiv.className="dplaces";
+                iDiv.value = resO[i];
+                iDiv.addEventListener("click",destObj.printWorking);
 
+                destObj.container.appendChild(iDiv);
+            }
+            destObj.container.style.display="block";
+        }, 
+        printWorking: function(evt){
+            value = evt.currentTarget.value
+           
+            destObj.search.value = value;
+            destObj.container.style.display="none";
+        }
+    };
+</script>
 </body>
+<footer class="page-footer font-small blue pt-4">
+		<!-- Footer Links -->
+		<div style="background-color:#ededed;" class="container-fluid text-center text-md-left">
+	  <!-- Grid row -->
+	  <div class="row">
+
+		<!-- Grid column -->
+		<div class="col-md-6 mt-md-0 mt-3">
+
+			  <!-- Content -->
+			  <h5 style="padding-top: 20px;" class="text-uppercase">HOP IN</h5>
+			  <p>Hop In is one of the leading carpooling apps in South Asia. Forget going into the city to get out of town. We connect people together, making it possible to travel literally anywhere in the area, directly :)</p>
+
+	   </div>
+	   <!-- Grid column -->
+
+		<hr class="clearfix w-100 d-md-none pb-3">
+
+		<!-- Grid column -->
+		<div style="padding-top: 10px;"class="col-md-3 mb-md-0 mb-3">
+
+		  <ul class="list-unstyled">
+			  <table>
+					<tr>
+							<th><img style="margin-left: 20px; padding: 5px 5px 5px 5px;" src="static/images/youtubeLogo.png" width="40" height="40"></th>
+						  <th><img style="padding: 5px 5px 5px 5px;" src="static/images/facebookLogo.png" width="40" height="40"></th>
+						  <th><img style="padding: 5px 5px 5px 5px;" src="static/images/instagramLogo.png" width="40" height="40"></th>
+						  <th><img style="padding: 5px 5px 5px 5px;" src="static/images/twitterLogo.png" width="40" height="40"></th>							
+					</tr>
+			  </table>	  
+		  </ul>
+		</div>
+
+	  </div>
+	  <!-- Grid row -->
+
+	</div>
+	<!-- Footer Links -->
+
+	<!-- Copyright -->
+	<div style="background-color:#dfdfdf;" class="footer-copyright text-center py-3">© 2019 Copyright:
+	  <a href="#"> Hop In </a>
+	</div>
+	<!-- Copyright -->
+
+  </footer>
 
 </html>
 

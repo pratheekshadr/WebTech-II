@@ -18,23 +18,24 @@
 
     <!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script> -->
 
-    <!-- <script src="static/js/signUp.js"></script> -->
-    <style>
+	<!-- <script src="static/js/signUp.js"></script> -->
+	  <style>
         #container, #container1, #placeparent{
             height:200px;
             overflow-y: scroll;
         }
+		
 
+		
     </style>
 </head>
 
 <body>
     <div class="container">
-    <!-- <script src="static/js/signUp.js"></script> -->
-        <form class="form-signin" action = "{{url_for('offerRide')}}" method = "post" role="form">
+        <form  id="form-signin" action = "{{url_for('offerRide')}}" method = "post" role="form">
             <h2 class="form-signin-heading">Offer Ride</h2>
             <table border="0" cellpadding="0">
-                    <tr>
+                    <tr id="placesText">
                         <td>Pick Up Points</td>
                         <td><input type="text" id="sourcesearch"  name="offer_source" class="form-control" onkeypress="sourceObj.getTerm()" placeholder="Source" required autofocus></td>
                     </tr>
@@ -44,7 +45,7 @@
                     </tr>
             </table>
             <table border="0" cellpadding="0">
-                    <tr>
+                    <tr id="placesText">
                         <td>Pick Up Points</td>
                         <td><input type="text" id="destsearch"  name="offer_dest" class="form-control" onkeypress="destObj.getTerm()" placeholder="Destination" required autofocus></td>
                     </tr>
@@ -66,10 +67,10 @@
             <button id="pickupbtn" class="btn btn-lg btn-primary btn-block" type="button" onclick="places.getPlaces()">Add pickup points</button>
 			<div id="placeparent" style="display: none;">
 			</div>
-			<!-- add checked pickup points here -->
+
 			<input id="checkedValues" name="offer_pickuppoints" type="textbox" style="display: none;">
             <input class = "btn"  type="submit" value = "Confirm" >
-            <!-- <button id="offerbtn" class="btn btn-lg btn-primary btn-block" type="button">Register Car</button> -->
+           
         </form>
     </div>
     <script>
@@ -92,7 +93,7 @@
 				showPlaces: function(){
 					if(places.xhr.readyState == 4 && places.xhr.status== 200)
 					{	
-                        alert("respone came");
+                       
                         var resO = JSON.parse(this.response);
                        
                         var parent = document.getElementById("placeparent");
@@ -293,8 +294,55 @@
                 destObj.container.style.display="none";
             }
 		};
-    </script>
+	</script>
+		
 </body>
+<footer class="page-footer font-small blue pt-4">
+		<!-- Footer Links -->
+		<div style="background-color:#ededed;" class="container-fluid text-center text-md-left">
+	  <!-- Grid row -->
+	  <div class="row">
+
+		<!-- Grid column -->
+		<div class="col-md-6 mt-md-0 mt-3">
+
+			  <!-- Content -->
+			  <h5 style="padding-top: 20px;" class="text-uppercase">HOP IN</h5>
+			  <p>Hop In is one of the leading carpooling apps in South Asia. Forget going into the city to get out of town. We connect people together, making it possible to travel literally anywhere in the area, directly :)</p>
+
+	   </div>
+	   <!-- Grid column -->
+
+		<hr class="clearfix w-100 d-md-none pb-3">
+
+		<!-- Grid column -->
+		<div style="padding-top: 10px;"class="col-md-3 mb-md-0 mb-3">
+
+		  <ul class="list-unstyled">
+			  <table>
+					<tr>
+							<th><img style="margin-left: 20px; padding: 5px 5px 5px 5px;" src="static/images/youtubeLogo.png" width="40" height="40"></th>
+						  <th><img style="padding: 5px 5px 5px 5px;" src="static/images/facebookLogo.png" width="40" height="40"></th>
+						  <th><img style="padding: 5px 5px 5px 5px;" src="static/images/instagramLogo.png" width="40" height="40"></th>
+						  <th><img style="padding: 5px 5px 5px 5px;" src="static/images/twitterLogo.png" width="40" height="40"></th>							
+					</tr>
+			  </table>	  
+		  </ul>
+		</div>
+
+	  </div>
+	  <!-- Grid row -->
+
+	</div>
+	<!-- Footer Links -->
+
+	<!-- Copyright -->
+	<div style="background-color:#dfdfdf;" class="footer-copyright text-center py-3">© 2019 Copyright:
+	  <a href="#"> Hop In </a>
+	</div>
+	<!-- Copyright -->
+
+  </footer>
 
 </html>
 

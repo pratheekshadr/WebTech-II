@@ -11,6 +11,8 @@ from sklearn.utils import shuffle
 import numpy as np
 from math import cos, asin, sqrt
 import json
+import time
+decrease_seats=0
 
 #reading the saved model form pickle file
 pickle_in = open("static/knn/knn.pickle","rb")
@@ -73,14 +75,34 @@ mongo = PyMongo(app)
 app.secret_key = "any random string"
 CORS(app)
 
-@app.route('/')
-def hello():
-    return "Hello World!"
+# @app.route('/')
+# def hello():
+#     return "Hello World!"
+@app.route('/home')
+def home():
+    session['logged_in']=False
+    return render_template('main2.html')
+
 
 @app.route('/index')
 def index():
+    print(session['username'])
     return render_template('index.html')
      
+@app.route('/stream')
+def stream():         
+    res=[]
+    s=mongo.db.sse.find({});
+    for t in s:
+        res.append(t)
+    newlist=sorted(res, key = lambda k:k['count'], reverse=True)
+
+    Row_list=[]
+    for i in range(0,2):
+        Row_list.append(newlist[i]);
+    print(Row_list)
+    return render_template('cometSSE.html',output=Row_list)
+
 @app.route('/signUp')
 def signUp():
     return render_template('signUp.html')
@@ -108,7 +130,8 @@ def signUpUser():
             return redirect("/index")
             # return json.dumps({'status':'New user created'});
     else:
-            # ?????? where will this go???
+            # ?????? where will this go???     alert that user already exists and redirect to signup page itself
+            # return render_template('signUp.html',data="user exists")  
             return json.dumps({'status':'User already exists'})
             #return redirect("/index")
 
@@ -185,7 +208,7 @@ def loginUser():
         print("Invalid credentials")
         return json.dumps({'status':"Invalid"})
 
-        #????redirect to which page
+        #????redirect to which page     alert invalid credentials and redirect to login page
         # return render_template("login.html")
     else:
         print("successfully logged in")
@@ -202,7 +225,7 @@ def logout():
     session['username']  =""
     print(session['logged_in'])
     print(session['username'])
-    return redirect("/index")    ##redirect to homepage
+    return redirect("/home")    ##redirect to homepage
 
 
 @app.route('/offer')
@@ -229,23 +252,128 @@ def offerRide():
   
     offer_source = request.form['offer_source']
     offer_dest   = request.form['offer_dest']
-    offer_seats  = request.form['offer_seats']
+    offer_seats  = int(request.form['offer_seats'])
     cost_km      = request.form['cost_km']
-    offer_seats  = request.form['offer_pickuppoints']
+    offer_pickupPoints  = request.form['offer_pickuppoints']
+
+    # print("\n\n\n\n********")
     print(offer_seats)
     car_model  = request.form['car_model']
     reg_no     =request.form['reg_no']
     offer_date =request.form['offer_date']
     offer_time =request.form['offer_time']
 
-    mongo.db.offer.insert({'offer_source':offer_source,'offer_dest':offer_dest,'car_model':car_model,'reg_no':reg_no,'offer_seats':offer_seats,'cost_km':cost_km,'offer_date':offer_date,'offer_time':offer_time});
+    mongo.db.offer.insert({'username':uname,'email':email,'phno':phno,'offer_source':offer_source,'offer_dest':offer_dest,
+        'car_model':car_model,'reg_no':reg_no,'offer_seats':offer_seats,
+        'cost_km':cost_km,'offer_date':offer_date,'offer_time':offer_time,
+        'pickUpPoints':offer_pickupPoints});
     print("Offered ride confirmed")
 
-    #return render_template("offer.html", pickupPoints = pickupPoints)
-    return "hello"
-    # return redirect('/logout')
-    # return json.dumps({'status':"Inserted"});
+    return redirect('/home')
+
+
   
+@app.route('/join')
+def join():
+    if session.get('logged_in'):
+        return redirect("/joinRidePage")
+    else:
+        # return json.dumps({'status':"Login First"});
+        return redirect("/login")
+
+@app.route('/joinRidePage')
+def joinRidePage():
+    return render_template('join.html')
+
+@app.route('/joinRide',methods=['POST'])
+def joinRide():
+    global decrease_seats
+    # print(decrease_seats)
+    arr_details  = []
+    available_rides = []
+
+    uname = session['username']
+    search = mongo.db.users.find({"username":uname} )
+
+    for term in search:
+        arr_details.append(term)
+
+    email = arr_details[0]['email']
+    phno = arr_details[0]['telephone']
+    join_source = request.form['join_source']
+    join_dest = request.form['join_dest']
+    join_seats = int(request.form['join_seats'])
+    join_date = request.form['join_date']
+    decrease_seats=join_seats
+    # print(decrease_seats)
+    # join_time=request.form['join_time']
+    # print(arr_details)
+    # print(arr_details[0])
+    # print(arr_details[0]['_id'])
+
+    print("\n\n***************")
+    print(join_source)
+    print(join_dest)
+    search_avail=mongo.db.offer.find( { "$and": [ {"offer_source":join_source}, {"offer_dest":join_dest}] } );
+    print(search_avail)
+    for term in search_avail:
+        print(term)
+        available_rides.append(term)
+    # print(available_rides)
+    # print(len(available_rides))
+    
+    print(available_rides)
+    return render_template("join_avail.html",data=available_rides)
+    # return json.dumps({'status':"query ride"});
+
+@app.route('/updateRecords',methods=['POST','GET'])
+def updateRecords():
+    global decrease_seats
+    print("update")
+    print(decrease_seats)
+    upd_arr=[]
+    sse_arr=[]
+    sel_radio=request.form['radio_join']
+    strr=str(decrease_seats-1)
+    # print(sel_radio)
+    # mongo.db.offer.update( { "username": sel_radio },{ "$inc": { "offer_seats": strr } })
+    decrease_seats=0
+
+    print("updateeeee")
+    print(decrease_seats)
+    rec=mongo.db.offer.find( { "$and": [ {"username":sel_radio}] } );
+    for x in rec:
+        upd_arr.append(x)
+    upd_source=upd_arr[0]['offer_source']
+    upd_dest=upd_arr[0]['offer_dest']
+
+    sse_search=mongo.db.sse.find( { "$and": [ {"source":upd_source},{"destination":upd_dest}] } );
+    for y in sse_search:
+        sse_arr.append(y)
+    # print(sse_arr)
+    if sse_arr==[]:
+        mongo.db.sse.insert({'source':upd_source,'destination':upd_dest,'count':1});
+    else:
+        mongo.db.sse.update( { "$and": [ {"source":upd_source},{"destination":upd_dest}] },{ "$inc": { "count": 1 } })
+
+    ##alert and redirect to home page
+    # return json.dumps({'Confirmation':"Hurray! Your ride is booked"});
+    return redirect('/home')
+
+@app.route('/writeCSV')
+def writeCSV():
+    a=[]
+    rec=mongo.db.sse.find({});
+    for x in rec:
+        a.append(x)
+    with open('test_output.csv', 'w') as csvfile:
+        fields = ['source','destination','count']
+        writer = csv.DictWriter(csvfile, fieldnames=fields)
+        writer.writeheader()
+        for x in a:
+            writer.writerow({'source':x["source"],'destination': x["destination"],'count':x["count"]});
+    return json.dumps({"a":"a"});
+
 
 if __name__=="__main__":
 

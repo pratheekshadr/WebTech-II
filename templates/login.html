@@ -12,8 +12,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="">
     <meta name="author" content="">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link rel="icon" href="{{url_for('static',filename='images/car2.jpg')}}" type="image/jpg" sizes="16x16">
 
-    <link href="static/css/bootstrap.min.css" rel="stylesheet">
+    <!--<link href="static/css/bootstrap.min.css" rel="stylesheet">-->
     <link href="static/css/signup.css" rel="stylesheet">
 
     <!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script> -->
@@ -22,9 +24,31 @@
 
     </script>
 </head>
+<header>
+		<nav class="navbar navbar-expand-lg navbar-light bg-light">
+  			<a class="navbar-brand" href="/">
+  				<img style="max-width:70px; margin-top: -7px" src="{{url_for('static',filename='images/car2.jpg')}}" type="image/jpg" >
+  			</a>
 
+  			<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+    			<span class="navbar-toggler-icon"></span>
+  			</button>
+
+  			<div class="collapse navbar-collapse" id="navbarSupportedContent">
+   				 <ul class="navbar-nav mr-auto">
+
+      				<li class="nav-item active">
+        				<a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
+      				</li>
+        		</ul>
+
+      			<a class="btn btn-outline-primary mr-2 my-2 my-sm-0" href="#" role="button">Login</a>
+      			<a class="btn btn-outline-success mr-2 my-2 my-sm-0" href="#" role="button">Signup</a>
+  			</div>
+		</nav>
+	</header>
 <body>
-    <div class="container">
+    <div class="container" style="background-color:#5cb85c;">
          <form class="form-signin" role="form"  action = "{{url_for('loginUser')}}" method = "post" >
             <h2 class="form-signin-heading">Log In </h2>
             <input type="text" name="uname_login" class="form-control" placeholder="Name" required
@@ -38,9 +62,54 @@
             
         </form>
     </div>
-    
-
 
 </body>
+
+<footer class="page-footer font-small blue pt-4">
+        <!-- Footer Links -->
+        <div style="background-color:#ededed;" class="container-fluid text-center text-md-left">
+      <!-- Grid row -->
+      <div class="row">
+
+        <!-- Grid column -->
+        <div class="col-md-6 mt-md-0 mt-3">
+
+              <!-- Content -->
+              <h5 style="padding-top: 20px;" class="text-uppercase">HOP IN</h5>
+              <p>Hop In is one of the leading carpooling apps in South Asia. Forget going into the city to get out of town. We connect people together, making it possible to travel literally anywhere in the area, directly :)</p>
+
+       </div>
+       <!-- Grid column -->
+
+        <hr class="clearfix w-100 d-md-none pb-3">
+
+        <!-- Grid column -->
+        <div style="padding-top: 10px;"class="col-md-3 mb-md-0 mb-3">
+
+          <ul class="list-unstyled">
+              <table>
+                    <tr>
+                            <th><img style="margin-left: 20px; padding: 5px 5px 5px 5px;" src="static/images/youtubeLogo.png" width="40" height="40"></th>
+                          <th><img style="padding: 5px 5px 5px 5px;" src="static/images/facebookLogo.png" width="40" height="40"></th>
+                          <th><img style="padding: 5px 5px 5px 5px;" src="static/images/instagramLogo.png" width="40" height="40"></th>
+                          <th><img style="padding: 5px 5px 5px 5px;" src="static/images/twitterLogo.png" width="40" height="40"></th>							
+                    </tr>
+              </table>	  
+          </ul>
+        </div>
+
+      </div>
+      <!-- Grid row -->
+
+    </div>
+    <!-- Footer Links -->
+
+    <!-- Copyright -->
+    <div style="background-color:#dfdfdf;" class="footer-copyright text-center py-3">© 2019 Copyright:
+      <a href="#"> Hop In </a>
+    </div>
+    <!-- Copyright -->
+
+  </footer>
 
 </html>

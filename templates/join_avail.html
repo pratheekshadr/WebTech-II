@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Search Results</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+  <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='search_boot.css') }}">
+
+
+
+</head>
+
+
+    <script> 
+        function displayRadioValue() { 
+            var ele = document.getElementsByName('radio_join'); 
+              
+            for(i = 0; i < ele.length; i++) { 
+                if(ele[i].checked) 
+                document.getElementById("result").innerHTML
+                        = "Gender: "+ele[i].value; 
+            } 
+        } 
+    </script> 
+
+
+<style>
+body
+{
+  background-color: #120d5b;
+}
+</style>
+
+
+<div class="container">  
+    <form action = "{{url_for('updateRecords')}}" method = "post">
+
+            <table class="table table-striped stripe-color">
+                    <thead>
+                      <tr  class="heading">
+                        <th></th>
+                        <th>Name</th>
+                        <th>Phone Number</th>
+                        <th>Car Model</th>
+                        <th>Registration Number</th>
+                        <th>Source</th>
+                        <th>Destination</th>
+                        <th>Time</th>
+                        <th>Cost</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                
+                      {% for i in data %}
+                         <tr>
+                            <th><input type="radio" name="radio_join" value="{{i['username']}}">{{i['username']}}<br></th>
+                            <th> {{i['username']}}</th>
+                            <th> {{i['phno']}}</th>
+                            <th> {{i['car_model']}}</th>
+                            <th> {{i['reg_no']}}</th>
+                            <th> {{i['offer_source']}}</th>
+                            <th> {{i['offer_dest']}}</th>
+                            <th> {{i['offer_time']}}</th>
+                            <th> {{i['cost_km']}}</th>
+                         </tr>
+                    {% endfor %}
+                    </tbody>
+                  </table>
+                  <input class="sub_btn" type="submit" value="Choose Ride">
+    </form>      
+
+</div>
+
+
+
+</body>
+</html>
