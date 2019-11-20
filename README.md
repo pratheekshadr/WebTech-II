@@ -17,7 +17,7 @@ Syntax:     >mongoimport -d [dbName] -c [tableName] --type CSV --file [csvName] 
 
 Extra:
 Queries on mongo shell
-1 >use wt     (switches to wt db)
+1. >use wt     (switches to wt db)
 
 2. >show db   (shows dbs)
 
